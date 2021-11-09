@@ -1,7 +1,7 @@
 <h1 align="center">
   <img alt="collaborations" src="images/generic-graph.png"     />
   <br/>
-  Citation Graph Analysis & Academic Retrieval System
+  Citation Graph Analysis 
 </h1>
 <h3 align="center">
   Anthony Reidy, 18369643. Kian Sweeney, 18306226.
