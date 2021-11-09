@@ -19,6 +19,7 @@
 ## Preamble
 
 ## Technologies Used
+![Tech_used](images/tech_used.png)
 
 
 
