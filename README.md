@@ -17,7 +17,7 @@
 - [Github Link](#github-link)
 
 ## Preamble
-
+An inital study of researcher relationships within DCU’s school of computing revealed little collaboration.  We intend to explore this observation further.  First, we plan to scrape faculty member’s Google Scholar and DORAS profiles  to  extract  additional  nuggets  of  information  using  the BeatuifulSoup and Selenium libraries on pySpark.  Next, we plan to explore our observation further by employing graph algorithms using GraphX. In an effort to increase collaboration,we propose an academic retrieval system,DCU Academic Search. Overall, we believe that the results generated from this investigation will be crucial for understanding research partnerships within DCU and we hope that DCU Academic search may provide avenues for cooperation, especially for early researchers who may not know the expertise of certain faculty members.
 ## Technologies Used
 ![Tech_used](images/tech_used.png)
 
