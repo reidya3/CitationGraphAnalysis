@@ -1,6 +1,6 @@
 
 <h1 align="center">
-  <img alt="collaborations" src="images/generic-graph-v2.png" height="115px" />
+  <img alt="collaborations" src="images/generic-graph.png"  height="315px" />
   <br/>
   Citation Graph Analysis & Academic Retrieval System
 </h1>
