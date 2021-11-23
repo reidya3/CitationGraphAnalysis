@@ -4,7 +4,7 @@ cd app/ && sbt assembly
 # go back of app
 cd ..
 
-## run graph algorithims as if the PWD was at this location i.e. grah-anayltics/
+## run graph algorithims as if the PWD was at this location i.e. CitationGraphAnalysis/grah-anayltics/
 
 # Start master node. 
 $SPARK_HOME/sbin/start-master.sh
