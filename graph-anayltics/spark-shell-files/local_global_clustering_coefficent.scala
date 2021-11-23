@@ -164,7 +164,6 @@ tricount_local_coeff_by_user.collect.foreach { case (vid, (cluster_coef,triangle
        println(name, (cluster_coef,triangle_count))
         }
 }
-val triCounts = myGraph.triangleCount().vertices
 
 // compute global clustering coefficient 
 var global_clustering_coefficent = 0.0
@@ -173,10 +172,28 @@ global_clustering_coefficent +=  count
 }
 println("Global clustering coefficient", global_clustering_coefficent/verts.count )
 
+//initializing the graph (dcu researchers only, directed)
+val dcu_researhcers_only_vertex_list = researchers.filter{ case(id, Researcher(name, pos)) => pos != "Unkown"}.map(x => x._1).collect
+val dcu_constricted_vertex = myGraph.vertices.filter{ case (id:Long, Researcher(name, pos)) => dcu_researhcers_only_vertex.contains(id)}
+val dcu_constricted_edges = myGraph.edges.filter{ case Edge(srcid:Long, dstid:Long, weight ) => dcu_researhcers_only_vertex.contains(srcid) && dcu_researhcers_only_vertex.contains(dstid)}
+val dcu_only_graph = Graph( dcu_constricted_vertex, dcu_constricted_edges)
+//compute local clustering coefficient and triangle count for each researcher
+val lcc = LocalClusteringCoefficient.run(dcu_only_graph)
+val verts = lcc.vertices
+val triCounts = dcu_only_graph.triangleCount().vertices
+val tricount_local_coeff_by_user = verts.join(triCounts)
+println("Local clustering coefficient and Triangle count for each researcher")
 
+tricount_local_coeff_by_user.collect.foreach { case (vid, (cluster_coef,triangle_count)) =>
+   var researcher_vertex = dcu_only_graph.vertices.filter{ case (id:Long, Researcher(name, pos)) => id == vid}
+   researcher_vertex.collect.foreach { case (id:Long, Researcher(name, pos)) =>
+       println(name, (cluster_coef,triangle_count))
+        }
+}
 
-// test working graph 
-//myGraph.vertices.filter{ case (id:Long, Researcher(name, pos)) => pos == "Professor"}.count
-//myGraph.vertices.collect.foreach { case (id:Long, Researcher(name, pos)) =>
-  //  println(name)
-//}
+// compute global clustering coefficient 
+var global_clustering_coefficent = 0.0
+verts.collect.foreach { case (vid, count) =>
+global_clustering_coefficent +=  count
+}
+println("Global clustering coefficient", global_clustering_coefficent/verts.count )

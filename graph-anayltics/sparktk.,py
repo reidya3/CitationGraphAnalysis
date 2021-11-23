@@ -1,9 +1,0 @@
-from sparktk import TkContext
-
-tc = TkContext()
-ds = "hdfs://nameservice1/org/29ace093-e11f-4f0b-b254-3f8e973476e5/brokers/userspace/694b3da9-c21a-4063-bf16-e072ac47f881/30fc50da-f065-41d8-a510-77d0b7683a47/000000_1"
-sc = [("Name1", string), ("Name2", float), ("Total_Paper_Count", float)]
-
-frame = tc.frame.import_csv(ds,schema=sc)
-
-frame.inspect()

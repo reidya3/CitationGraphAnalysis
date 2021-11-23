@@ -18,6 +18,7 @@ val researchersSchemaExpected =  StructType(
         )
     )
 
+// Schema for collaboration edges
 val collabartionsSchemaExpected =  StructType(
     List(
         StructField("Name1" , LongType , true),
@@ -27,34 +28,41 @@ val collabartionsSchemaExpected =  StructType(
         )
     )
 
-
+/
 case class Researcher(name: String, position: String)
 
+// defining Edge RDD and duplicating Edges so its bi-directional or undirected. 
 val collaborations = spark.read.option("header",true).schema(collabartionsSchemaExpected).csv("CitationGraphAnalysis/graph-anayltics/cleaned_data/collaborations.csv")
 val collaborations_weighted = collaborations.withColumn("weight", (col("Total_Paper_Count")  + (col("Total_Citations_Achieved") * .5))).drop("Total_Paper_Count", "Total_Citations_Achieved")
 val collaborations_weighted_rdd:  RDD[Edge[Double]] = collaborations_weighted.rdd.map { row:Row =>
       Edge(row.getAs[VertexId](0), row.getAs[VertexId](1), row.getAs[Double](2))
 }
+val collaborations_weighted_rdd_other_direction:  RDD[Edge[Double]] = collaborations_weighted.rdd.map { row:Row =>
+      Edge(row.getAs[VertexId](1), row.getAs[VertexId](0), row.getAs[Double](2))}
+val collaborations_bi_directed = collaborations_weighted_rdd.union(collaborations_weighted_rdd)
 
-// bidirected 
-//val collaborations_weighted_rdd_other_direction:  RDD[Edge[Double]] = collaborations_weighted.rdd.map { row:Row =>
-//      Edge(row.getAs[VertexId](1), row.getAs[VertexId](0), row.getAs[Double](2))
-//}
-//val collaborations_bi_directed = collaborations_weighted_rdd.union(collaborations_weighted_rdd)
-
-//val researchers: RDD[(IntegerType, StringType, StringType)] = spark.read.option("header",true).schema(researchersSchemaExpected).csv("CitationGraphAnalysis/graph-anayltics/cleaned_data/unique_authors.csv").rdd.map{x:Row => (x.getAs[IntegerType](0),x.getAs[StringType](1),  x.getAs[StringType](2))}
-
+// Defining reseracher vertices RDD
 val researchers: RDD[(VertexId, Researcher)] = spark.read.option("header",true).schema(researchersSchemaExpected).csv("CitationGraphAnalysis/graph-anayltics/cleaned_data/unique_authors.csv").rdd.map{x:Row => (x.getAs[VertexId](0),Researcher(x.getAs[String](1),  x.getAs[String](2)))}
-researchers.collect.foreach { case (id:Long, Researcher(name, pos)) =>
-}
+
+// Undirected graph of DCU researchers plus external collaborators
+val undirected_graph: Graph[Researcher, Double] = Graph(researchers, collaborations_bi_directed)
+val ranks = undirected_graph.pageRank(0.0001).vertices
+
+println("Researcher's pagerank scores (including outside collaborators")
+// Join the ranks with the usernames
+val researchers_rank = researchers.join(ranks)
+researchers_rank.collect().foreach(println)
 
 
-val myGraph: Graph[Researcher, Double] = Graph(researchers, collaborations_weighted_rdd)
-myGraph.vertices.collect.foreach { case (id:Long, Researcher(name, pos)) =>
-    var out_degree =  collaborations_weighted_rdd.filter{case Edge(srcid:Long, dstid:Long, weight ) => srcid == id}.count
-    var in_degree =  collaborations_weighted_rdd.filter{case Edge(srcid:Long, dstid:Long, weight ) => dstid == id}.count
-    var total_degree = out_degree + in_degree
-    println(name, total_degree)
-}
-
+// compute dcu researcher only graph
+println("DCU researcher ony")
+val dcu_researhcers_only_vertex_list = researchers.filter{ case(id, Researcher(name, pos)) => pos != "Unkown"}.map(x => x._1).collect
+val dcu_constricted_vertex = undirected_graph.vertices.filter{ case (id:Long, Researcher(name, pos)) => dcu_researhcers_only_vertex.contains(id)}
+val dcu_constricted_edges = undirected_graph.edges.filter{ case Edge(srcid:Long, dstid:Long, weight ) => dcu_researhcers_only_vertex.contains(srcid) && dcu_researhcers_only_vertex.contains(dstid)}
+val dcu_only_graph = Graph( dcu_constricted_vertex, dcu_constricted_edges)
+//Compute page rank of dcu researchers only
+val dcu_only_rank = dcu_only_graph.pageRank(0.0001).vertices
+val researchers_rank = researchers.join(dcu_only_rank)
+// Compute pagerank of researchers only
+researchers_rank.collect().foreach(println)
 
