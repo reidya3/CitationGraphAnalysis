@@ -1,5 +1,5 @@
 <h1 align="center">
-  <img alt="collaborations" src="images/final-report-visuals/page-rank-graph-2.png"     />
+  <img alt="collaborations", height=300px, src="images/final-report-visuals/page-rank-graph-2.png"     />
   <br/>
   Citation Graph Analysis 
 </h1>
