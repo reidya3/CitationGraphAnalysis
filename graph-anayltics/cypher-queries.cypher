@@ -7,6 +7,8 @@ CREATE CONSTRAINT ON (p:Person) ASSERT p.name IS UNIQUE;
 LOAD CSV WITH HEADERS FROM
 "file:///unique_authors.csv" AS line
 WITH line
+match (n{name:line.`Unique Author` })
+set n.position_num = line.`Job_title_num`
 
 CALL apoc.create.node(['Person',line.`Job Title`],{name: line.`Unique Author`}) YIELD node
 RETURN node
