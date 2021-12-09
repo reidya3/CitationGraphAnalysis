@@ -16,7 +16,7 @@
 - [Video Link](#video-link)
 
 ## Preamble
-An initial study of researcher relationships within DCU’s school of computing revealed little collaboration.  We intend to explore this observation further.  First, we plan to scrape faculty member’s Google Scholar and DORAS profiles  to  extract  additional  nuggets  of  information  using  the BeatuifulSoup and Selenium libraries on pySpark.  Next, we plan to explore our observation further by employing graph algorithms using GraphX.  Overall, we believe that the results generated from this investigation will be crucial for understanding research partnerships within DCU and we hope that DCU Academic search may provide avenues for cooperation, especially for early researchers who may not know the expertise of certain faculty members.
+An initial study of researcher relationships within DCU’s school of computing revealed little collaboration. In this investigation, we intend explored this observation further.  First, we scraped faculty member’s Google Scholar and DORAS profiles  to  extract  additional  nuggets  of  information  using  the BeatuifulSoup and Selenium libraries on pySpark.  Next, we explored our inital observation further by employing graph algorithms using GraphX.  Overall, we believe that the results generated from this investigation are crucial for understanding research partnerships within DCU. We hope that our work may provide useful information which will enable cooperation, especially for early researchers who may not know the expertise of certain faculty members.
 
 ## Report
 Our midway and final report can be found in the [reports](reports) folder. 
