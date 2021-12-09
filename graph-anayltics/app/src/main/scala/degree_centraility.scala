@@ -75,4 +75,3 @@ object DegreeMain {
     spark.stop()
 	}
 }
-

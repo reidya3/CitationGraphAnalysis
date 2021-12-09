@@ -25,12 +25,12 @@ import scala.reflect.ClassTag
 import org.apache.spark.sql.functions.{col, lit, when}
 
 
+
 object PageRankMain {
 	def main(args: Array[String]):Unit = {
     val spark = SparkSession.builder().master("local[*]").appName("Degree centrality").getOrCreate()
     import spark.implicits._  
-    spark.sparkContext.setLogLevel("WARN")  
-
+    spark.sparkContext.setLogLevel("WARN")
     val researchersSchemaExpected =  StructType(
         List(
             StructField("index" , LongType , true),
@@ -48,9 +48,6 @@ object PageRankMain {
             StructField("Total_Citations_Achieved" , LongType,  true)
             )
         )
-
-    
-    case class Researcher(name: String, position: String)
 
     // defining Edge RDD and duplicating Edges so its bi-directional or undirected. 
     val collaborations = spark.read.option("header",true).schema(collabartionsSchemaExpected).csv("/usr/local/spark/CitationGraphAnalysis/graph-anayltics/cleaned_data/collaborations.csv")
@@ -86,5 +83,6 @@ object PageRankMain {
     val dcu_researchers_rank = researchers.join(dcu_only_rank)
     // Compute pagerank of researchers only
     dcu_researchers_rank.collect().foreach(println)
+    spark.stop()
     }
 }

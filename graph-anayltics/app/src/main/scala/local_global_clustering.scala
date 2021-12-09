@@ -137,12 +137,12 @@ object LocalGlobalClusteringMain {
     spark.sparkContext.setLogLevel("WARN")    
     // Schema for researchers.csv file
     val researchersSchemaExpected =  StructType(
-        List(
-            StructField("index" , LongType , true),
-            StructField("Unique_Author" , StringType, true),
-            StructField("Job_title" , StringType,  true)
-            )
+    List(
+        StructField("index" , LongType , true),
+        StructField("Unique_Author" , StringType, true),
+        StructField("Job_title" , StringType,  true)
         )
+    )
 
     val collabartionsSchemaExpected =  StructType(
         List(
@@ -153,14 +153,11 @@ object LocalGlobalClusteringMain {
             )
         )
 
-
-    case class Researcher(name: String, position: String)
-
     // collaborations csv details edges in the graph
     val collaborations = spark.read.option("header",true).schema(collabartionsSchemaExpected).csv("/usr/local/spark/CitationGraphAnalysis/graph-anayltics/cleaned_data/collaborations.csv")
     val collaborations_weighted = collaborations.withColumn("weight", (col("Total_Paper_Count")  + (col("Total_Citations_Achieved") * .5))).drop("Total_Paper_Count", "Total_Citations_Achieved")
     val collaborations_weighted_rdd:  RDD[Edge[Double]] = collaborations_weighted.rdd.map { row:Row =>
-        Edge(row.getAs[VertexId](0), row.getAs[VertexId](1), row.getAs[Double](2))
+          Edge(row.getAs[VertexId](0), row.getAs[VertexId](1), row.getAs[Double](2))
     }
 
     // unique authors csv details vertices in the graph
@@ -178,9 +175,9 @@ object LocalGlobalClusteringMain {
     println("Local clustering coefficient and Triangle count for each researcher")
 
     tricount_local_coeff_by_user.collect.foreach { case (vid, (cluster_coef,triangle_count)) =>
-    var researcher_vertex = myGraph.vertices.filter{ case (id:Long, Researcher(name, pos)) => id == vid}
-    researcher_vertex.collect.foreach { case (id:Long, Researcher(name, pos)) =>
-        println(name, (cluster_coef,triangle_count))
+      var researcher_vertex = myGraph.vertices.filter{ case (id:Long, Researcher(name, pos)) => id == vid}
+      researcher_vertex.collect.foreach { case (id:Long, Researcher(name, pos)) =>
+          println(name, (cluster_coef,triangle_count))
             }
     }
 
@@ -197,25 +194,26 @@ object LocalGlobalClusteringMain {
     val dcu_constricted_edges = myGraph.edges.filter{ case Edge(srcid:Long, dstid:Long, weight ) => dcu_researhcers_only_vertex_list.contains(srcid) && dcu_researhcers_only_vertex_list.contains(dstid)}
     val dcu_only_graph = Graph( dcu_constricted_vertex, dcu_constricted_edges)
     //compute local clustering coefficient and triangle count for each researcher
-    val lcc_dcu_only = LocalClusteringCoefficient.run(dcu_only_graph)
-    val verts_dcu_only = lcc_dcu_only.vertices
-    val triCounts_dcu_only = dcu_only_graph.triangleCount().vertices
-    val tricount_local_coeff_by_user_dcu_only = verts_dcu_only.join(triCounts)
+    val lcc_dcu = LocalClusteringCoefficient.run(dcu_only_graph)
+    val verts_dcu = lcc_dcu.vertices
+    val triCounts_dcu = dcu_only_graph.triangleCount().vertices
+    val tricount_local_coeff_by_dcu_user = verts_dcu.join(triCounts_dcu)
     println("Local clustering coefficient and Triangle count for each researcher")
 
-    tricount_local_coeff_by_user_dcu_only.collect.foreach { case (vid, (cluster_coef,triangle_count)) =>
-    var researcher_vertex = dcu_only_graph.vertices.filter{ case (id:Long, Researcher(name, pos)) => id == vid}
-    researcher_vertex.collect.foreach { case (id:Long, Researcher(name, pos)) =>
-        println(name, (cluster_coef,triangle_count))
+    tricount_local_coeff_by_dcu_user.collect.foreach { case (vid, (cluster_coef,triangle_count)) =>
+      var dcu_researcher_vertex = dcu_only_graph.vertices.filter{ case (id:Long, Researcher(name, pos)) => id == vid}
+      dcu_researcher_vertex.collect.foreach { case (id:Long, Researcher(name, pos)) =>
+          println(name, (cluster_coef,triangle_count))
             }
     }
 
     // compute global clustering coefficient 
-    var global_clustering_coefficent_dcu_only = 0.0
-    verts.collect.foreach { case (vid, count) =>
-    global_clustering_coefficent +=  count
+    var dcu_global_clustering_coefficent = 0.0
+    verts_dcu.collect.foreach { case (vid, count) =>
+    dcu_global_clustering_coefficent +=  count
     }
-    println("Global clustering coefficient", global_clustering_coefficent_dcu_only/verts_dcu_only.count)
+    println("Global clustering coefficient", dcu_global_clustering_coefficent/verts_dcu.count )
+    spark.stop()
    }
 }
 

@@ -174,8 +174,8 @@ println("Global clustering coefficient", global_clustering_coefficent/verts.coun
 
 //initializing the graph (dcu researchers only, directed)
 val dcu_researhcers_only_vertex_list = researchers.filter{ case(id, Researcher(name, pos)) => pos != "Unkown"}.map(x => x._1).collect
-val dcu_constricted_vertex = myGraph.vertices.filter{ case (id:Long, Researcher(name, pos)) => dcu_researhcers_only_vertex.contains(id)}
-val dcu_constricted_edges = myGraph.edges.filter{ case Edge(srcid:Long, dstid:Long, weight ) => dcu_researhcers_only_vertex.contains(srcid) && dcu_researhcers_only_vertex.contains(dstid)}
+val dcu_constricted_vertex = myGraph.vertices.filter{ case (id:Long, Researcher(name, pos)) => dcu_researhcers_only_vertex_list.contains(id)}
+val dcu_constricted_edges = myGraph.edges.filter{ case Edge(srcid:Long, dstid:Long, weight ) => dcu_researhcers_only_vertex_list.contains(srcid) && dcu_researhcers_only_vertex_list.contains(dstid)}
 val dcu_only_graph = Graph( dcu_constricted_vertex, dcu_constricted_edges)
 //compute local clustering coefficient and triangle count for each researcher
 val lcc = LocalClusteringCoefficient.run(dcu_only_graph)

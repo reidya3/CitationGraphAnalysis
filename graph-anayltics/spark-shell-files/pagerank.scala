@@ -28,7 +28,7 @@ val collabartionsSchemaExpected =  StructType(
         )
     )
 
-/
+
 case class Researcher(name: String, position: String)
 
 // defining Edge RDD and duplicating Edges so its bi-directional or undirected. 
@@ -57,8 +57,8 @@ researchers_rank.collect().foreach(println)
 // compute dcu researcher only graph
 println("DCU researcher ony")
 val dcu_researhcers_only_vertex_list = researchers.filter{ case(id, Researcher(name, pos)) => pos != "Unkown"}.map(x => x._1).collect
-val dcu_constricted_vertex = undirected_graph.vertices.filter{ case (id:Long, Researcher(name, pos)) => dcu_researhcers_only_vertex.contains(id)}
-val dcu_constricted_edges = undirected_graph.edges.filter{ case Edge(srcid:Long, dstid:Long, weight ) => dcu_researhcers_only_vertex.contains(srcid) && dcu_researhcers_only_vertex.contains(dstid)}
+val dcu_constricted_vertex = undirected_graph.vertices.filter{ case (id:Long, Researcher(name, pos)) => dcu_researhcers_only_vertex_list.contains(id)}
+val dcu_constricted_edges = undirected_graph.edges.filter{ case Edge(srcid:Long, dstid:Long, weight ) => dcu_researhcers_only_vertex_list.contains(srcid) && dcu_researhcers_only_vertex_list.contains(dstid)}
 val dcu_only_graph = Graph( dcu_constricted_vertex, dcu_constricted_edges)
 //Compute page rank of dcu researchers only
 val dcu_only_rank = dcu_only_graph.pageRank(0.0001).vertices
