@@ -27,4 +27,4 @@ Our midway and final report can be found in the [reports](reports) folder.
 
 
 ## Video Link
-The link to the video showcasing us running the described technologies can be found [here](https://drive.google.com/drive/u/0/folders/1v81OPN7zrqRXe1KVx2XWd4sqBn140gYz].
+The link to the video showcasing us running the described technologies can be found [here](https://drive.google.com/drive/u/0/folders/1v81OPN7zrqRXe1KVx2XWd4sqBn140gYz).
