@@ -26,7 +26,7 @@ Our midway and final report can be found in the [reports](reports) folder.
 ![Tech_used](images/final-report-visuals/updated_graphx.png)
 
 ## Graph Analytics
-We utilise GraphX (scala) to implement our graph algrorithims. `Sbt assembly` is used to create a scala aplication  where a endpoint exists for every graph algorithim. The bash script used to start the master and worker node can be found [here](graph-anayltics/run-graph-algos.sh). The scala app can be found [here](graph-analytics/app)
+We utilise GraphX (scala) to implement our graph algrorithims. `Sbt assembly` is used to create a scala aplication  where a endpoint exists for every graph algorithim. The bash script used to start the master/worker nodes and run the graph algorithms can be found [here](graph-anayltics/run-graph-algos.sh). The scala app can be found [here](graph-anayltics/app)
 
 ## Video Link
 The link to the video showcasing us running the described technologies can be found [here](https://drive.google.com/drive/u/0/folders/1v81OPN7zrqRXe1KVx2XWd4sqBn140gYz).
