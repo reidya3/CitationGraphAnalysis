@@ -42,13 +42,13 @@ object LabelPropagationMain {
 
 
     // creating RDD containing Keyword->Keyword relationships where count is the number of common papers between keywords
-    val key_edges = spark.read.option("header",true).schema(keyEdgesSchemaExpected).csv("/usr/local/spark/CitationGraphAnalysis/graph-anayltics/cleaned_data/doras_edges.csv")
+    val key_edges = spark.read.option("header",true).schema(keyEdgesSchemaExpected).csv("hdfs://localhost:9000/input/citation-grap-analysis/graphx/doras_edges")
     val key_edges_weighted_rdd:  RDD[Edge[Double]] = key_edges.rdd.map { row:Row =>
         Edge(row.getAs[VertexId](0), row.getAs[VertexId](1), row.getAs[Double](2))
     }
 
     // Creating RDD for keyword vertices
-    val keyword: RDD[(VertexId, Keyword)] = spark.read.option("header",true).schema(keywordSchemaExpected).csv("/usr/local/spark/CitationGraphAnalysis/graph-anayltics/cleaned_data/doras_vertices.csv").rdd.map{x:Row => (x.getAs[VertexId](0),Keyword(x.getAs[String](1)))}
+    val keyword: RDD[(VertexId, Keyword)] = spark.read.option("header",true).schema(keywordSchemaExpected).csv("hdfs://localhost:9000/input/citation-grap-analysis/graphx/doras_vertices").rdd.map{x:Row => (x.getAs[VertexId](0),Keyword(x.getAs[String](1)))}
 
 
     //initializing the graph (keyword, directed). Label propagation doesn't care about directions, so this is ok.

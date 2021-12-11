@@ -154,14 +154,14 @@ object LocalGlobalClusteringMain {
         )
 
     // collaborations csv details edges in the graph
-    val collaborations = spark.read.option("header",true).schema(collabartionsSchemaExpected).csv("/usr/local/spark/CitationGraphAnalysis/graph-anayltics/cleaned_data/collaborations.csv")
+    val collaborations = spark.read.option("header",true).schema(collabartionsSchemaExpected).csv("hdfs://localhost:9000/input/citation-grap-analysis/graphx/collaborations")
     val collaborations_weighted = collaborations.withColumn("weight", (col("Total_Paper_Count")  + (col("Total_Citations_Achieved") * .5))).drop("Total_Paper_Count", "Total_Citations_Achieved")
     val collaborations_weighted_rdd:  RDD[Edge[Double]] = collaborations_weighted.rdd.map { row:Row =>
           Edge(row.getAs[VertexId](0), row.getAs[VertexId](1), row.getAs[Double](2))
     }
 
     // unique authors csv details vertices in the graph
-    val researchers: RDD[(VertexId, Researcher)] = spark.read.option("header",true).schema(researchersSchemaExpected).csv("/usr/local/spark/CitationGraphAnalysis/graph-anayltics/cleaned_data/unique_authors.csv").rdd.map{x:Row => (x.getAs[VertexId](0),Researcher(x.getAs[String](1),  x.getAs[String](2)))}
+    val researchers: RDD[(VertexId, Researcher)] = spark.read.option("header",true).schema(researchersSchemaExpected).csv("hdfs://localhost:9000/input/citation-grap-analysis/graphx/unique_authors.csv").rdd.map{x:Row => (x.getAs[VertexId](0),Researcher(x.getAs[String](1),  x.getAs[String](2)))}
 
 
     //initializing the graph (dcu + external researchers, directed)

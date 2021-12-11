@@ -50,7 +50,7 @@ object PageRankMain {
         )
 
     // defining Edge RDD and duplicating Edges so its bi-directional or undirected. 
-    val collaborations = spark.read.option("header",true).schema(collabartionsSchemaExpected).csv("/usr/local/spark/CitationGraphAnalysis/graph-anayltics/cleaned_data/collaborations.csv")
+    val collaborations = spark.read.option("header",true).schema(collabartionsSchemaExpected).csv("hdfs://localhost:9000/input/citation-grap-analysis/graphx/collaborations")
     val collaborations_weighted = collaborations.withColumn("weight", (col("Total_Paper_Count")  + (col("Total_Citations_Achieved") * .5))).drop("Total_Paper_Count", "Total_Citations_Achieved")
     val collaborations_weighted_rdd:  RDD[Edge[Double]] = collaborations_weighted.rdd.map { row:Row =>
         Edge(row.getAs[VertexId](0), row.getAs[VertexId](1), row.getAs[Double](2))
@@ -60,7 +60,7 @@ object PageRankMain {
     val collaborations_bi_directed = collaborations_weighted_rdd.union(collaborations_weighted_rdd)
 
     // Defining reseracher vertices RDD
-    val researchers: RDD[(VertexId, Researcher)] = spark.read.option("header",true).schema(researchersSchemaExpected).csv("/usr/local/spark/CitationGraphAnalysis/graph-anayltics/cleaned_data/unique_authors.csv").rdd.map{x:Row => (x.getAs[VertexId](0),Researcher(x.getAs[String](1),  x.getAs[String](2)))}
+    val researchers: RDD[(VertexId, Researcher)] = spark.read.option("header",true).schema(researchersSchemaExpected).csv("hdfs://localhost:9000/input/citation-grap-analysis/graphx/unique_authors").rdd.map{x:Row => (x.getAs[VertexId](0),Researcher(x.getAs[String](1),  x.getAs[String](2)))}
 
     // Undirected graph of DCU researchers plus external collaborators
     val undirected_graph: Graph[Researcher, Double] = Graph(researchers, collaborations_bi_directed)
