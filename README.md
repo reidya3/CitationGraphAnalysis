@@ -13,6 +13,7 @@
 - [Preamble](#preamble)
 - [Report](#report)
 - [Technologies Used](#technologies-used)
+- [Graph Analytics](#graph-analytics)
 - [Video Link](#video-link)
 
 ## Preamble
@@ -24,7 +25,8 @@ Our midway and final report can be found in the [reports](reports) folder.
 ## Technologies Used
 ![Tech_used](images/final-report-visuals/updated_graphx.png)
 
-
+## Graph Analytics
+We utilise GraphX (scala) to implement our graph algrorithims. `Sbt assembly` is used to create a scala aplication  where a endpoint exists for every graph algorithim. The bash script used to start the master and worker node can be found [here](graph-anayltics/run-graph-algos.sh). The scala app can be found [here](graph-analytics/app)
 
 ## Video Link
 The link to the video showcasing us running the described technologies can be found [here](https://drive.google.com/drive/u/0/folders/1v81OPN7zrqRXe1KVx2XWd4sqBn140gYz).
